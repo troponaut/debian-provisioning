@@ -1,4 +1,3 @@
-bash
 #!/usr/bin/env bash
 
 set -euo pipefail
@@ -19,13 +18,12 @@ print_info()    { echo -e "${INFO}${ICON_INFO} ${1}${RESET}"; }
 print_success() { echo -e "${SUCCESS}${ICON_SUCCESS} ${1}${RESET}"; }
 print_error()   { echo -e "${ERROR}${ICON_ERROR} ${1}${RESET}"; }
 
-# ─── Cleanup & exit on interrupt or error ──────────────────────────────
+# ─── Cleanup & exit on error ─────────────────────────────────────────────
 cleanup() {
   print_error "Provisioning aborted by user or error."
   clear
   exit 1
 }
-trap 'cleanup' ERR SIGINT SIGTERM
 
 # ─── Header Banner Function ─────────────────────────────────────────────
 print_banner() {
@@ -132,13 +130,13 @@ if id -u "${USERNAME}" &>/dev/null; then
     skip    "Leave existing keys unchanged" 3>&1 1>&2 2>&3)
   AUTHFILE="/home/${USERNAME}/.ssh/authorized_keys"
   if [[ "$ACTION" == "replace" ]]; then
-    wt --msgbox "Existing key will be replaced." 8 50
+    whiptail --msgbox "Existing key will be replaced." 8 50
     echo "$(whiptail --inputbox "New public key:" 10 60 3>&1 1>&2 2>&3)" > "$AUTHFILE"
     chown ${USERNAME}:${USERNAME} "$AUTHFILE"
     chmod 600 "$AUTHFILE"
     print_success "SSH key replaced for ${USERNAME}"
   elif [[ "$ACTION" == "append" ]]; then
-    wt --msgbox "New key will be appended." 8 50
+    whiptail --msgbox "New key will be appended." 8 50
     echo "$(whiptail --inputbox "New public key:" 10 60 3>&1 1>&2 2>&3)" >> "$AUTHFILE"
     chown ${USERNAME}:${USERNAME} "$AUTHFILE"
     chmod 600 "$AUTHFILE"
