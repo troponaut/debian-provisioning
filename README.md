@@ -9,7 +9,7 @@ This repository contains a single Bash script, `provision.sh`, designed to autom
 - **SSH hardening**:
   - Regenerates RSA (4096‑bit) and Ed25519 host keys.
   - Prunes weak Diffie–Hellman moduli.
-  - Applies a best‑practice OpenSSH configuration from [troponaut/openssh‑hardening].
+  - Applies a best‑practice OpenSSH configuration from [troponaut/openssh‑hardening](https://github.com/troponaut/openssh-hardening).
   - Verifies the SSH daemon configuration before restarting.
 - **Optional partition expansion**: Offers to grow the root partition to fill the disk.
 - **Hostname configuration**: Prompts for and sets the system hostname, updating `/etc/hosts`.
