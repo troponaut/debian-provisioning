@@ -1,6 +1,6 @@
-# Debian 12 Provisioning Script
+# Debian 12 (Cloud Image) Provisioning Script
 
-This repository contains a single Bash script, `provision.sh`, designed to automate the initial setup and hardening of a freshly installed Debian 12 system.
+This repository contains a single Bash script, `provision.sh`, designed to automate the initial setup and hardening of a freshly installed Debian 12 cloud image.
 
 ## Features
 
