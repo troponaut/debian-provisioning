@@ -181,7 +181,7 @@ fi
 echo -n " [ ] Set hostname... "
 hostnamectl set-hostname "${NEW_HOST}"
 grep -q '^127\.0\.1\.1' /etc/hosts && \
-  sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ${NEWHOST}/" /etc/hosts || \
+  sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ${NEW_HOST}/" /etc/hosts || \
   echo "127.0.1.1 ${NEW_HOST}" >> /etc/hosts
 echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Hostname set${RESET}"
 
