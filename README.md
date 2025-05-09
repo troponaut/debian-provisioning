@@ -25,10 +25,11 @@ This repository contains a single Bash script, `provision.sh`, designed to autom
 
 ## Quick Start
 
-To download and execute the provisioning script in one step, run:
+To download and execute (as root) the provisioning script in one step, run:
 
 ```bash
-sudo bash -c "curl -fsSL https://raw.githubusercontent.com/troponaut/debian-provisioning/main/provision.sh | bash"
+bash -c "$(curl -fsSL **https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 ```
 
 Alternatively, you can manually fetch and inspect before running:
