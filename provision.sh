@@ -63,19 +63,25 @@ NEW_HOST=${NEW_HOST:-$default_host}
 echo -e "${PROMPT}Enter username:${RESET}"
 read -r USERNAME
 
-# Force non-empty password
-echo -e "${PROMPT}Enter password for ${USERNAME}:${RESET}"
-while true; do
-  read -rs PASSWORD
-  echo
-  if [[ -n "$PASSWORD" ]]; then
-    break
-  fi
-  print_error "Password cannot be empty. Please enter a password:"
-done
-
-echo -e "${PROMPT}Enter public SSH key for ${USERNAME}:${RESET}"
-read -r PUBKEY
+# Check if user exists
+if id -u "${USERNAME}" &>/dev/null; then
+  USER_EXISTS=1
+  print_info "User '${USERNAME}' exists; will ensure sudo privileges later."
+else
+  USER_EXISTS=0
+  # Force non-empty password
+  echo -e "${PROMPT}Enter password for ${USERNAME}:${RESET}"
+  while true; do
+    read -rs PASSWORD
+    echo
+    if [[ -n "$PASSWORD" ]]; then
+      break
+    fi
+    print_error "Password cannot be empty. Please enter a password:"
+  done
+  echo -e "${PROMPT}Enter public SSH key for ${USERNAME}:${RESET}"
+  read -r PUBKEY
+fi
 
 echo -e "${PROMPT}Reboot after completion? (y/N)${RESET}"
 read -r ans
@@ -92,8 +98,9 @@ echo -e "${SUCCESS} • Harden OpenSSH and restart sshd${RESET}"
 if [[ $EXTEND_PART -eq 1 ]]; then
   echo -e "${SUCCESS} • Extend root partition${RESET}"
 fi
+
 echo -e "${SUCCESS} • Set hostname: ${NEW_HOST}${RESET}"
-echo -e "${SUCCESS} • Create/update user: ${USERNAME}${RESET}"
+echo -e "${SUCCESS} • "$( [[ $USER_EXISTS -eq 1 ]] && echo "Ensure existing user '${USERNAME}' has sudo" || echo "Create new user '${USERNAME}' with sudo" )"${RESET}"
 echo -e "${SUCCESS} • Disable root account${RESET}"
 if [[ $REBOOT -eq 1 ]]; then
   echo -e "${SUCCESS} • Reboot after completion${RESET}"
@@ -176,8 +183,7 @@ echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Hostname set${RESET}"
 
 # 6. Create/update user
 echo -n " [ ] Create/update user... "
-if id -u "${USERNAME}" &>/dev/null; then
-  # User exists: ensure sudo group membership
+if [[ $USER_EXISTS -eq 1 ]]; then
   if id -nG "${USERNAME}" | grep -qw sudo; then
     echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] User in sudo group${RESET}"
   else
@@ -187,8 +193,6 @@ if id -u "${USERNAME}" &>/dev/null; then
 else
   useradd -m -s /bin/bash "${USERNAME}"
   usermod -aG sudo "${USERNAME}"
-  echo -n ""
-  # Set password and SSH key
   echo "${USERNAME}:${PASSWORD}" | chpasswd
   install -o ${USERNAME} -g ${USERNAME} -m 700 -d /home/${USERNAME}/.ssh
   echo "${PUBKEY}" > /home/${USERNAME}/.ssh/authorized_keys
