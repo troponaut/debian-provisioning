@@ -53,7 +53,9 @@ fi
 echo -e "${PROMPT}Extend root partition to full disk? (y/N)${RESET}"
 read -r ans
 EXTEND_PART=0
-if [[ "$ans" =~ ^[Yy] ]]; then EXTEND_PART=1; fi
+if [[ "$ans" =~ ^[Yy] ]]; then
+  EXTEND_PART=1
+fi
 
 default_host=$(hostname)
 echo -e "${PROMPT}Enter hostname [${default_host}]:${RESET}"
@@ -86,7 +88,9 @@ fi
 echo -e "${PROMPT}Reboot after completion? (y/N)${RESET}"
 read -r ans
 REBOOT=0
-if [[ "$ans" =~ ^[Yy] ]]; then REBOOT=1; fi
+if [[ "$ans" =~ ^[Yy] ]]; then
+  REBOOT=1
+fi
 
 # ─── Summary & Confirmation ───────────────────────────────────────────
 echo -e "${INFO}=======================================${RESET}"
@@ -148,7 +152,7 @@ if curl -fsSL https://raw.githubusercontent.com/troponaut/openssh-hardening/main
   else
     cp "$TMP" "$HARDEN_FILE"
   fi
-  if sshd -t; then
+  if sshd -t >/dev/null 2>&1; then
     systemctl restart sshd
     echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] OpenSSH hardened${RESET}"
   else
@@ -177,7 +181,7 @@ fi
 echo -n " [ ] Set hostname... "
 hostnamectl set-hostname "${NEW_HOST}"
 grep -q '^127\.0\.1\.1' /etc/hosts && \
-  sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ${NEW_HOST}/" /etc/hosts || \
+  sed -i "s/^127\.0\.1\.1.*/127.0.1.1 ${NEWHOST}/" /etc/hosts || \
   echo "127.0.1.1 ${NEW_HOST}" >> /etc/hosts
 echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Hostname set${RESET}"
 
@@ -203,9 +207,7 @@ fi
 
 # 7. Disable root
 echo -n " [ ] Disable root... "
-if passwd -d root && passwd -l root; then
-  # Ensure nologin shell; ignore 'no changes' errors
-  usermod -s /usr/sbin/nologin root || true
+if passwd -d root >/dev/null 2>&1 && passwd -l root >/dev/null 2>&1 && usermod -s /usr/sbin/nologin root >/dev/null 2>&1; then
   echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Root disabled${RESET}"
 else
   echo -e "\r ${ERROR}[${ICON_ERROR}] Root disable failed${RESET}"
