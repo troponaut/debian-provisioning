@@ -203,7 +203,9 @@ fi
 
 # 7. Disable root
 echo -n " [ ] Disable root... "
-if passwd -d root && passwd -l root && usermod -s /usr/sbin/nologin root; then
+if passwd -d root && passwd -l root; then
+  # Ensure nologin shell; ignore 'no changes' errors
+  usermod -s /usr/sbin/nologin root || true
   echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Root disabled${RESET}"
 else
   echo -e "\r ${ERROR}[${ICON_ERROR}] Root disable failed${RESET}"
