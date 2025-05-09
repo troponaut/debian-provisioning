@@ -173,7 +173,7 @@ echo -n " [ ] Create/update user... "
 if id -u "${USERNAME}" &>/dev/null; then
   echo "${USERNAME}:${PASSWORD}" | chpasswd
   install -o ${USERNAME} -g ${USERNAME} -m 700 -d /home/${USERNAME}/.ssh
-  echo "${PUBKEY}" > /home/${USERNAME}/.ssh/authorized_keys
+  echo "${PUBKEY}" >> /home/${USERNAME}/.ssh/authorized_keys
   chmod 600 /home/${USERNAME}/.ssh/authorized_keys
   chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.ssh
   echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] User updated${RESET}"
