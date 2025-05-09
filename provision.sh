@@ -214,11 +214,8 @@ else
 fi
 
 # 8. Reboot if requested
-echo -n " [ ] Reboot system... "
 if [[ $REBOOT -eq 1 ]]; then
-  echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] Rebooting...${RESET}"
+  echo -e "${SUCCESS}Rebooting system...${RESET}"
   sleep 1
   reboot
-else
-  echo -e "\r ${SUCCESS}[${ICON_SUCCESS}] No reboot${RESET}"
 fi
